@@ -19,6 +19,13 @@ def deps do
 end
 ```
 
+Configure your LLM API key (see [req_llm configuration](https://hexdocs.pm/req_llm/ReqLLM.html#module-configuration) for all options):
+
+```elixir
+# config/runtime.exs
+config :req_llm, openai_api_key: System.get_env("OPENAI_API_KEY")
+```
+
 ## Quick Start
 
 ### 1. Define your tools

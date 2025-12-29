@@ -65,7 +65,7 @@ defmodule Legion.Test.Scrapers.Tools.HackerNewsToolTest do
     test "each post has required fields" do
       posts = HackerNewsTool.fetch_posts("Elixir", 5)
 
-      if length(posts) != [] do
+      if posts != [] do
         post = hd(posts)
         assert Map.has_key?(post, :title)
         assert Map.has_key?(post, :url)

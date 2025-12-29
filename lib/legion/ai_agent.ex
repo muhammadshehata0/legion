@@ -23,13 +23,10 @@ defmodule Legion.AIAgent do
 
         @impl Legion.AIAgent
         def output_schema do
-          %{
-            type: :object,
-            properties: %{
-              summary: %{type: :string},
-              count: %{type: :integer}
-            }
-          }
+          [
+            summary: [type: :string, required: true],
+            count: [type: :integer, required: true]
+          ]
         end
 
         @impl Legion.AIAgent

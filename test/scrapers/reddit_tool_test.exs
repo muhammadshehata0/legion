@@ -65,7 +65,7 @@ defmodule Legion.Test.Scrapers.Tools.RedditToolTest do
     test "each post has required fields" do
       posts = RedditTool.fetch_posts("Elixir", "elixir", 5)
 
-      if length(posts) != [] do
+      if posts != [] do
         post = hd(posts)
         assert Map.has_key?(post, :title)
         assert Map.has_key?(post, :url)
@@ -81,7 +81,7 @@ defmodule Legion.Test.Scrapers.Tools.RedditToolTest do
       posts = RedditTool.fetch_posts("programming", "programming", 5)
       assert is_list(posts)
 
-      if length(posts) != [] do
+      if posts != [] do
         post = hd(posts)
         assert post.source == "Reddit r/programming"
       end
