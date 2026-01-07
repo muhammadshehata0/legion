@@ -63,16 +63,13 @@ defmodule LegionTest do
       assert prompt =~ "power"
       assert prompt =~ "factorial"
 
-      # Should include response format
-      assert prompt =~ "action"
-      assert prompt =~ "eval_and_continue"
-      assert prompt =~ "eval_and_complete"
+      assert prompt =~ "You are an AI agent that accomplishes tasks by writing Elixir code"
     end
   end
 
   describe "Sandbox eval" do
     test "can eval math tool functions using agent as allowlist" do
-      # MathAgent itself implements Dune.Allowlist and allows its tools
+      # MathAgent itself implements Legion.Sandbox.Allowlist and allows its tools
       assert {:ok, 7} =
                Legion.Sandbox.eval(
                  "Legion.Test.MathTool.add(3, 4)",
@@ -121,7 +118,7 @@ defmodule LegionTest do
 
   describe "Sandbox eval with multiple tool modules" do
     test "can eval all three math tools using ComprehensiveMathAgent as allowlist" do
-      # ComprehensiveMathAgent has all three tools and implements Dune.Allowlist
+      # ComprehensiveMathAgent has all three tools and implements Legion.Sandbox.Allowlist
       assert {:ok, 7} =
                Legion.Sandbox.eval(
                  "Legion.Test.MathTool.add(3, 4)",

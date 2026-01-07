@@ -7,6 +7,19 @@
 
 Legion is an Elixir-native framework for building AI agents. Unlike traditional function-calling approaches, Legion agents generate and execute actual Elixir code, giving them the full power of the language while staying safely sandboxed.
 
+## Features
+
+- **Code Generation over Function Calling** - Agents write expressive Elixir pipelines instead of making dozens of tool-call round-trips. This makes your agents smarter and reduces amount of tokens being used. [See anthropic post about this](https://www.anthropic.com/engineering/code-execution-with-mcp).
+- **Sandboxed Execution** - Generated code runs in a restricted environment with controlled access to tools. You can define memory, time, and call limits.
+- **Simple Tool Definition** - Expose any Elixir module as a tool with `use Legion.Tool`. You can reuse your existing app logic.
+- **Authorization baked in** - The safest way to authorize tool calls via [`Vault`](https://github.com/dimamik/vault) library. Put all data needed to authorize LLM call before starting Agent, and validate it inside the tool call. Everything will be available due to the `Vault`'s nature.
+- **Long-lived Agents** - Maintain context across multi-turn conversations with `start_link/2`.
+- **Multi-Agent Systems** - Agents can orchestrate other agents, letting you create complex systems that will manage themselves.
+- **Human in the Loop** - Pause execution to request human input when needed
+- **Structured Output** - Define schemas to get typed, validated responses from agents, or omit types and operate on plain text. You have full conrol over prompts and schemas.
+- **Configurable** - Global defaults with per-agent overrides for model, timeouts, and limits
+- **Telemetry** - Built-in observability with events for calls, iterations, LLM requests, and more
+
 ## Installation
 
 Add `legion` to your list of dependencies in `mix.exs`:
@@ -64,7 +77,7 @@ end
 ### 3. Run the Agent
 
 ```elixir
-{:ok, result} = Legion.call(MyApp.ResearchAgent, "Find cool Elixir posts about Advent of Code and save them")
+{:ok, result} = Legion.execute(MyApp.ResearchAgent, "Find cool Elixir posts about Advent of Code and save them")
 # => {:ok, "Found 3 relevant posts and saved 2 that met quality criteria."}
 ```
 
@@ -100,7 +113,7 @@ For multi-turn conversations or persistent agents:
 {:ok, pid} = Legion.start_link(MyApp.AssistantAgent, "Help me analyze this data")
 
 # Send follow-up messages
-{:ok, response} = Legion.send_sync(pid, "Now filter for items over $100")
+{:ok, response} = Legion.call(pid, "Now filter for items over $100")
 
 # Or fire-and-forget
 Legion.cast(pid, "Also check the reviews")
@@ -172,7 +185,7 @@ Request human input during agent execution:
 Legion.Tools.HumanTool.ask("Should I proceed with this operation?")
 
 # Your application responds
-Legion.respond(agent_pid, "Yes, proceed")
+Legion.call(agent_pid, {:respond, "Yes, proceed"})
 ```
 
 ## Multi-Agent Systems
@@ -197,9 +210,9 @@ end
 {:ok, research} = AgentTool.call(MyApp.ResearchAgent, "Find info about Elixir 1.18")
 
 # Start a long-lived sub-agent
-{:ok, pid} = AgentTool.start(MyApp.WriterAgent, "Write a blog post")
-AgentTool.send(pid, "Add a section about pattern matching")
-{:ok, draft} = AgentTool.ask(pid, "Show me what you have so far")
+{:ok, pid} = AgentTool.start_link(MyApp.WriterAgent, "Write a blog post")
+AgentTool.cast(pid, "Add a section about pattern matching")
+{:ok, draft} = AgentTool.call(pid, "Show me what you have so far")
 ```
 
 ## Telemetry
@@ -211,6 +224,8 @@ Legion emits telemetry events for observability:
 - `[:legion, :llm, :request, :start | :stop]` - LLM API calls
 - `[:legion, :sandbox, :eval, :start | :stop]` - code evaluation
 - `[:legion, :human, :input_required | :input_received]` - human-in-the-loop
+
+Plus, Legion emits `Req` telemetry events for HTTP requests.
 
 <!-- MDOC -->
 

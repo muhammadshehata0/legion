@@ -53,6 +53,47 @@ defmodule Legion.Tool do
               source_file: String.t() | nil
             }
 
+  @doc """
+  Optional callback that returns dynamic documentation based on tool options.
+
+  This is useful for tools like AgentTool that need to include runtime
+  configuration (like allowed_agents) in their documentation.
+
+  ## Parameters
+    - opts: The tool options map from the agent's `tool_options/1` callback
+
+  ## Returns
+    A string to append to the tool's documentation, or nil
+  """
+  @callback dynamic_doc(opts :: map()) :: String.t() | nil
+
+  @doc """
+  Optional callback that returns module aliases to inject into the sandbox.
+
+  This allows tools to expose their configured modules under shorter names.
+  For example, AgentTool can expose allowed agents as short aliases.
+
+  ## Parameters
+    - opts: The tool options map from the agent's `tool_options/1` callback
+
+  ## Returns
+    A list of `{short_name, full_module}` tuples, or empty list
+  """
+  @callback get_aliases(opts :: map()) :: [{atom(), module()}]
+
+  @doc """
+  Optional callback that overrides the tool description in prompts.
+
+  By default, the tool's `@moduledoc` is used as its description.
+  Implement this callback to provide a custom description instead.
+
+  ## Returns
+    A string description for the tool
+  """
+  @callback tool_description() :: String.t()
+
+  @optional_callbacks dynamic_doc: 1, get_aliases: 1, tool_description: 0
+
   defmacro __using__(_opts) do
     quote do
       @behaviour Legion.Tool
@@ -95,6 +136,9 @@ defmodule Legion.Tool do
     end
   end
 
+  # Internal callbacks that should not appear in tool documentation
+  @internal_callbacks [:dynamic_doc, :get_aliases, :tool_description, :__tool_info__]
+
   defp extract_functions_at_compile_time(env) do
     module = env.module
 
@@ -103,8 +147,8 @@ defmodule Legion.Tool do
 
     definitions
     |> Enum.reject(fn {name, _arity} ->
-      # Exclude private-by-convention and generated functions
-      String.starts_with?(Atom.to_string(name), "_") or name == :__tool_info__
+      # Exclude private-by-convention, generated, and internal callback functions
+      String.starts_with?(Atom.to_string(name), "_") or name in @internal_callbacks
     end)
     |> Enum.map(fn {name, arity} ->
       {doc, params} = get_function_info(module, name, arity)

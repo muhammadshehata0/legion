@@ -3,7 +3,7 @@ defmodule Legion.Config do
   Configuration management for Legion agents.
 
   Configuration is resolved with the following priority (highest to lowest):
-  1. Call options (passed to Legion.call/3)
+  1. Call options (passed to Legion.execute/3)
   2. Agent config (from agent's config/0 callback)
   3. Application environment
   4. Defaults
@@ -15,8 +15,7 @@ defmodule Legion.Config do
     max_iterations: 10,
     max_retries: 3,
     sandbox: %{
-      timeout: 5_000,
-      max_heap_size: 50_000
+      timeout: 5_000
     }
   }
 
@@ -41,7 +40,7 @@ defmodule Legion.Config do
 
   ## Parameters
     - agent_module: The agent module (must implement config/0 callback)
-    - call_opts: Options passed to Legion.call/3
+    - call_opts: Options passed to Legion.execute/3
 
   ## Returns
     A %Legion.Config{} struct with resolved configuration

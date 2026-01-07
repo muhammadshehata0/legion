@@ -93,14 +93,44 @@ defmodule Legion.Executor do
   end
 
   defp setup_vault(agent_module, tools) do
-    tool_opts =
-      tools
-      |> Enum.map(fn tool_module ->
-        {tool_module, agent_module.tool_options(tool_module)}
-      end)
-      |> Enum.into(%{})
+    {tool_opts, aliases} =
+      Enum.reduce(tools, {%{}, []}, &accumulate_tool_data(agent_module, &1, &2))
 
     Vault.unsafe_merge(tool_opts)
+    Vault.unsafe_merge(%{__legion_aliases__: aliases})
+  end
+
+  defp accumulate_tool_data(agent_module, tool_module, {opts_acc, aliases_acc}) do
+    opts = build_tool_opts(agent_module, tool_module)
+    aliases = collect_aliases(tool_module, opts)
+
+    {Map.put(opts_acc, tool_module, opts), aliases_acc ++ aliases}
+  end
+
+  defp build_tool_opts(agent_module, tool_module) do
+    agent_module
+    |> tool_module_opts(tool_module)
+    |> normalize_allowed_agents()
+  end
+
+  defp tool_module_opts(agent_module, tool_module), do: agent_module.tool_options(tool_module)
+
+  defp normalize_allowed_agents(opts) do
+    case Map.get(opts, :allowed_agents) do
+      agents when is_list(agents) ->
+        Map.put(opts, :allowed_agents, Enum.map(agents, &to_string/1))
+
+      _ ->
+        opts
+    end
+  end
+
+  defp collect_aliases(tool_module, opts) do
+    if function_exported?(tool_module, :get_aliases, 1) do
+      tool_module.get_aliases(opts)
+    else
+      []
+    end
   end
 
   defp execution_loop(agent_module, context, config) do
@@ -225,15 +255,15 @@ defmodule Legion.Executor do
       [:legion, :sandbox, :eval],
       %{agent: agent_module, code: code},
       fn ->
+        # Get aliases from Vault
+        aliases = Vault.get(:__legion_aliases__, [])
+
         # Merge base config with agent's custom sandbox options
         sandbox_opts =
-          [
-            timeout: config.sandbox.timeout,
-            max_heap_size: config.sandbox.max_heap_size
-          ]
+          [timeout: config.sandbox.timeout, aliases: aliases]
           |> Keyword.merge(agent_module.sandbox_options())
 
-        # Agent module itself implements Dune.Allowlist
+        # Agent module itself implements Legion.Sandbox.Allowlist
         case Sandbox.eval(code, agent_module, sandbox_opts) do
           {:ok, result} -> {:ok, result}
           {:error, error} -> {:error, error}
